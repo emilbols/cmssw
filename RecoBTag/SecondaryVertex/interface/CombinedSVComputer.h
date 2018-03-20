@@ -250,7 +250,7 @@ void CombinedSVComputer::fillCommonVariables(reco::TaggingVariableList & vars, r
 	float trackSip2dSigAboveCharm = threshTrack(ipInfo, reco::btag::IP2DSig, *jet, pv).ip2d.significance();
 	float trackSip2dValAboveCharm = threshTrack(ipInfo, reco::btag::IP2DSig, *jet, pv).ip2d.value();
 
-	if( (trackSip2dValAboveCharm == -1) && (trackSip3dValAboveCharm == -1) ){
+	if( (trackSip2dValAboveCharm == -1) && (trackSip3dValAboveCharm == -1) && trackFlip ){
 	  trackSip3dSigAboveCharm = -trackSip3dSigAboveCharm; 
 	  trackSip3dValAboveCharm = -trackSip3dValAboveCharm; 
 	  trackSip2dSigAboveCharm = -trackSip2dSigAboveCharm;
