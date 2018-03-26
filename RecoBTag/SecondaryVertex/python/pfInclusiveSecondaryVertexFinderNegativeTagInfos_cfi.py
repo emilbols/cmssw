@@ -8,4 +8,5 @@ pfInclusiveSecondaryVertexFinderNegativeTagInfos.vertexCuts.distVal2dMin = -2.5
 pfInclusiveSecondaryVertexFinderNegativeTagInfos.vertexCuts.distVal2dMax = -0.01
 pfInclusiveSecondaryVertexFinderNegativeTagInfos.vertexCuts.distSig2dMin = -99999.9
 pfInclusiveSecondaryVertexFinderNegativeTagInfos.vertexCuts.distSig2dMax = -2.0
+pfInclusiveSecondaryVertexFinderNegativeTagInfos.useExternalSV = cms.bool(False)
 pfInclusiveSecondaryVertexFinderNegativeTagInfos.vertexCuts.maxDeltaRToJetAxis = -0.5

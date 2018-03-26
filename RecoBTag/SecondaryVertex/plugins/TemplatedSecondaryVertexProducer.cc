@@ -860,7 +860,7 @@ void TemplatedSecondaryVertexProducer<IPTI,VTX>::produce(edm::Event &event,
 		  else {
 		      for(size_t iExtSv = 0; iExtSv < extSecVertex->size(); iExtSv++){
 			 const VTX & extVertex = (*extSecVertex)[iExtSv];
-			 if( Geom::deltaR2( ( position(extVertex) - pv.position() ), jetDir ) > extSVDeltaRToJet*extSVDeltaRToJet || extVertex.p4().M() < 0.3 )
+			 if( Geom::deltaR2( ( position(extVertex) - pv.position() ), (extSVDeltaRToJet > 0) ? jetDir : -jetDir ) > extSVDeltaRToJet*extSVDeltaRToJet || extVertex.p4().M() < 0.3 )
 			   continue;
 			 extAssoCollection.push_back( extVertex );
 		      }

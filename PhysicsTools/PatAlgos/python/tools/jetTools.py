@@ -280,7 +280,6 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
             process.load("RecoBTag.CTagging.cTagging_EventSetup_cff")
     import RecoBTag.Configuration.RecoBTag_cff as btag
     import RecoJets.JetProducers.caTopTaggers_cff as toptag
-
     if tightBTagNTkHits:
         if not runIVF:
             sys.stderr.write("-------------------------------------------------------------------\n")
@@ -377,7 +376,7 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
             if btagInfo == 'pfDeepCSVNegativeTagInfos':
                 addToProcessAndTask(btagPrefix+btagInfo+labelName+postfix,
                                     btag.pfDeepCSVNegativeTagInfos.clone(
-                                        svTagInfos = cms.InputTag(btagPrefix+'pfInclusiveSecondaryVertexFinderNegativeTagInfos'+labelName+postfix)),
+                                    svTagInfos = cms.InputTag(btagPrefix+'pfInclusiveSecondaryVertexFinderNegativeTagInfos'+labelName+postfix)),
                                     process, task)
                 if svClustering or fatJets != cms.InputTag(''):
                     setupSVClustering(getattr(process, btagPrefix+btagInfo+labelName+postfix), svClustering, algo, rParam, fatJets, groomedFatJets)
@@ -550,10 +549,11 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
             if 'DeepFlavourTagInfos'in btagInfo:
 
                 if btagInfo == 'pfNegativeDeepFlavourTagInfos':
-                    deep_csv_tag_infos = 'pfDeepCSVNegativeTagInfos' 
+                    deep_csv_tag_infos = 'pfDeepCSVNegativeTagInfos'
+                    flip = True
                 else:
                     deep_csv_tag_infos = 'pfDeepCSVTagInfos' 
-
+                    flip = False
                 # use right input tags when running with RECO PF candidates, which actually
                 # depens of wether jets were slimmed or not (check for s/S-limmed in name)
                 if not ('limmed' in jetSource.value()):
@@ -570,10 +570,11 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
                                       shallow_tag_infos = cms.InputTag(btagPrefix+deep_csv_tag_infos+labelName+postfix),
                                       puppi_value_map = puppi_value_map,
                                       vertex_associator = vertex_associator,
+                                      flip = flip
                                       ),
                                     process, task)
-
             acceptedTagInfos.append(btagInfo)
+            print btagInfo
         elif hasattr(toptag, btagInfo) :
             acceptedTagInfos.append(btagInfo)
         else:
@@ -582,7 +583,6 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
     acceptedBtagDiscriminators = list()
     for discriminator_name in btagDiscriminators :			
         btagDiscr = discriminator_name.split(':')[0] #split input tag to get the producer label
-        #print discriminator_name, '-->', btagDiscr
         if hasattr(btag,btagDiscr): 
             newDiscr = btagPrefix+btagDiscr+labelName+postfix #new discriminator name
             if hasattr(process, newDiscr):
@@ -599,6 +599,7 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
                     process,
                     task
                 )
+                print newDiscr
             elif hasattr(getattr(btag, btagDiscr), 'src'):
                 addToProcessAndTask(
                     newDiscr,
@@ -614,6 +615,8 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
         else:
             print '  --> %s ignored, since not available via RecoBTag.Configuration.RecoBTag_cff!'%(btagDiscr)
     #update meta-taggers, if any
+   
+
     for meta_tagger in present_meta:
         btagDiscr = meta_tagger.split(':')[0] #split input tag to get the producer label
         #print discriminator_name, '-->', btagDiscr
