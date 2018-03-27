@@ -321,6 +321,22 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
     ## setup all required btagInfos : we give a dedicated treatment for different
     ## types of tagInfos here. A common treatment is possible but might require a more
     ## general approach anyway in coordination with the btagging POG.
+    import RecoVertex.AdaptiveVertexFinder.inclusiveNegativeVertexing_cff as NegVertex        
+    addToProcessAndTask(btagPrefix+'inclusiveCandidateNegativeVertexFinder'+labelName+postfix,
+                        NegVertex.inclusiveCandidateNegativeVertexFinder.clone(primaryVertices = pvSource,tracks=pfCandidates),
+                        process, task)
+    addToProcessAndTask(btagPrefix+'candidateNegativeVertexMerger'+labelName+postfix,
+                        NegVertex.candidateNegativeVertexMerger.clone(secondaryVertices = cms.InputTag(btagPrefix+'inclusiveCandidateNegativeVertexFinder'+labelName+postfix)),
+                        process, task)
+    addToProcessAndTask(btagPrefix+'candidateNegativeVertexArbitrator'+labelName+postfix,
+                        NegVertex.candidateNegativeVertexArbitrator.clone( secondaryVertices = cms.InputTag(btagPrefix+'candidateNegativeVertexMerger'+labelName+postfix)
+                                                                           ,primaryVertices = pvSource
+                                                                           ,tracks=pfCandidates),
+                        process, task)
+    addToProcessAndTask(btagPrefix+'inclusiveCandidateNegativeSecondaryVertices'+labelName+postfix,
+                        NegVertex.inclusiveCandidateNegativeSecondaryVertices.clone(secondaryVertices = cms.InputTag(btagPrefix+'candidateNegativeVertexArbitrator'+labelName+postfix)),
+                        process, task)
+     
     acceptedTagInfos = list()
     for btagInfo in requiredTagInfos:
         if hasattr(btag,btagInfo):
@@ -421,7 +437,7 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
                 addToProcessAndTask(btagPrefix+btagInfo+labelName+postfix,
                                     btag.pfInclusiveSecondaryVertexFinderTagInfos.clone(
                                         trackIPTagInfos = cms.InputTag(btagPrefix+'pfImpactParameterTagInfos'+labelName+postfix),
-                                        extSVCollection=svSource),
+                                        extSVCollection = svSource),
                                     process, task)
                 if svClustering or fatJets != cms.InputTag(''):
                     setupSVClustering(getattr(process, btagPrefix+btagInfo+labelName+postfix), svClustering, algo, rParam, fatJets, groomedFatJets)
@@ -485,7 +501,7 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
                 addToProcessAndTask(btagPrefix+btagInfo+labelName+postfix,
                                     btag.pfInclusiveSecondaryVertexFinderNegativeTagInfos.clone(
                                         trackIPTagInfos = cms.InputTag(btagPrefix+'pfImpactParameterTagInfos'+labelName+postfix),
-                                        extSVCollection=svSource),
+                                        extSVCollection = cms.InputTag(btagPrefix+'inclusiveCandidateNegativeSecondaryVertices'+labelName+postfix)),
                                     process, task)
                 if svClustering or fatJets != cms.InputTag(''):
                     setupSVClustering(getattr(process, btagPrefix+btagInfo+labelName+postfix), svClustering, algo, rParam, fatJets, groomedFatJets)
@@ -545,11 +561,12 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
                 addToProcessAndTask(btagPrefix+btagInfo+labelName+postfix,
                                     btag.softPFElectronsTagInfos.clone(jets = jetSource, primaryVertex=pvSource, electrons=elSource),
                                     process, task)
-
+    
             if 'DeepFlavourTagInfos'in btagInfo:
-
+                svUsed = svSource
                 if btagInfo == 'pfNegativeDeepFlavourTagInfos':
                     deep_csv_tag_infos = 'pfDeepCSVNegativeTagInfos'
+                    svUsed = cms.InputTag(btagPrefix+'inclusiveCandidateNegativeSecondaryVertices'+labelName+postfix)
                     flip = True
                 else:
                     deep_csv_tag_infos = 'pfDeepCSVTagInfos' 
@@ -566,7 +583,7 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
                                     btag.pfDeepFlavourTagInfos.clone(
                                       jets = jetSource,
                                       vertices=pvSource,
-                                      secondary_vertices=svSource,
+                                      secondary_vertices=svUsed,
                                       shallow_tag_infos = cms.InputTag(btagPrefix+deep_csv_tag_infos+labelName+postfix),
                                       puppi_value_map = puppi_value_map,
                                       vertex_associator = vertex_associator,
