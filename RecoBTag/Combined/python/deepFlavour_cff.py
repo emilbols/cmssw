@@ -15,8 +15,8 @@ pfDeepCSVNegativeTagInfos = pfDeepCSVTagInfos.clone(
 	)
 pfDeepCSVNegativeTagInfos.computer.vertexFlip = True
 pfDeepCSVNegativeTagInfos.computer.trackFlip = True
-pfDeepCSVNegativeTagInfos.computer.trackSelection.sip3dSigMax = 0
-pfDeepCSVNegativeTagInfos.computer.trackPseudoSelection.sip3dSigMax = 0
+pfDeepCSVNegativeTagInfos.computer.trackSelection.sip3dSigMax = 10.0
+pfDeepCSVNegativeTagInfos.computer.trackPseudoSelection.sip3dSigMax = 10.0
 pfDeepCSVNegativeTagInfos.computer.trackPseudoSelection.sip2dSigMin = -99999.9
 pfDeepCSVNegativeTagInfos.computer.trackPseudoSelection.sip2dSigMax = -2.0
 
@@ -49,13 +49,12 @@ pfPositiveDeepCMVAJetTags = pfDeepCMVAJetTags.clone(
 
 
 
-##
-## Deep Flavour sequence, not complete as it would need the IP and SV tag infos
-##
-pfDeepFlavourTask = cms.Task(
+## Deep CSV+CMVA sequence, not complete as it would need the IP and SV tag infos
+pfDeepCSVTask = cms.Task(
     pfDeepCSVTagInfos,
     pfDeepCMVATagInfos, #SKIP for the moment
-    pfDeepCSVJetTags
-    , pfDeepCMVAJetTags
+    pfDeepCSVJetTags,
+    pfDeepCMVAJetTags
 )
-pfDeepFlavour = cms.Sequence(pfDeepFlavourTask)
+
+pfDeepCSV = cms.Sequence(pfDeepCSVTask)

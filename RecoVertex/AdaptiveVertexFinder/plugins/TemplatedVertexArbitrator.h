@@ -115,7 +115,7 @@ void TemplatedVertexArbitrator<InputContainer,VTX>::produce(edm::Event &event, c
 		//        const edm::RefVector< TrackCollection > tracksForArbitration= selectedTracks;
 		Product  theRecoVertices = theArbitrator->trackVertexArbitrator(beamSpot, pv, selectedTracks,
 				theSecVertexColl);
-
+		
 		for(unsigned int ivtx=0; ivtx < theRecoVertices.size(); ivtx++){
 			if ( !(nTracks(theRecoVertices[ivtx]) > 1) ) continue;
 			recoVertices->push_back(theRecoVertices[ivtx]);
