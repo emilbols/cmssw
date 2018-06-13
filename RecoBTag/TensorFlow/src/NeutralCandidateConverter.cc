@@ -12,7 +12,6 @@ namespace btagbtvdeep {
     commonCandidateToFeatures(n_pf, jet, drminpfcandsv, jetR, n_pf_features);
     
     n_pf_features.hadFrac = n_pf->hcalFraction();
-    n_pf_features.puppiw = n_pf->puppiWeight();
     
   } 
   
@@ -22,7 +21,6 @@ namespace btagbtvdeep {
 			       NeutralCandidateFeatures & n_pf_features) {
     
     commonCandidateToFeatures(n_pf, jet, drminpfcandsv, jetR, n_pf_features);
-    n_pf_features.puppiw = puppiw;
     
     // need to get a value map and more stuff to do properly
     // otherwise will be different than for PackedCandidates

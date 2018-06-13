@@ -9,7 +9,6 @@ class NeutralCandidateFeatures {
 
     float ptrel;
 
-    float puppiw;
     float deltaR;
     float isGamma;
 

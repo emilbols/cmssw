@@ -8,7 +8,6 @@ class ChargedCandidateFeatures {
   public:
 
     float ptrel;
-    float puppiw;
     float vtx_ass;
 
     float btagPf_trackEtaRel;

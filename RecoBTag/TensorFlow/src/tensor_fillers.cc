@@ -97,7 +97,6 @@ namespace btagbtvdeep {
     *(++ptr) = c_pf_features.ptrel;
     *(++ptr) = c_pf_features.drminsv;
     *(++ptr) = c_pf_features.vtx_ass;
-    *(++ptr) = c_pf_features.puppiw;
     *(++ptr) = c_pf_features.chi2;
     *(++ptr) = c_pf_features.quality;
 
@@ -134,7 +133,6 @@ namespace btagbtvdeep {
     *(++ptr) = n_pf_features.isGamma;
     *(++ptr) = n_pf_features.hadFrac;
     *(++ptr) = n_pf_features.drminsv;
-    *(++ptr) = n_pf_features.puppiw;
 
   }
   

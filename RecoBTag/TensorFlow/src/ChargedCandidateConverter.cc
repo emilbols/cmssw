@@ -28,8 +28,6 @@ namespace btagbtvdeep {
     
     c_pf_features.vtx_ass = c_pf->pvAssociationQuality();
     
-    c_pf_features.puppiw = c_pf->puppiWeight();
-    
     // if PackedCandidate does not have TrackDetails this gives an Exception
     // because unpackCovariance might be called for pseudoTrack/bestTrack
     if (c_pf->hasTrackDetails()) {
@@ -62,9 +60,7 @@ namespace btagbtvdeep {
 	pv_ass_quality == 7) {
       c_pf_features.vtx_ass = (float) pat::PackedCandidate::UsedInFitTight;
     }
-    
-    c_pf_features.puppiw = puppiw;
-    
+     
     const auto & pseudo_track =  (c_pf->bestTrack()) ? *c_pf->bestTrack() : reco::Track();
     c_pf_features.chi2 = catch_infs_and_bound(std::floor(pseudo_track.normalizedChi2()),300,-1,300);
     // conditions from PackedCandidate producer

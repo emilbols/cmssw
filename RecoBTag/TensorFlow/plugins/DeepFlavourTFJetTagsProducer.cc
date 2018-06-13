@@ -136,7 +136,7 @@ void DeepFlavourTFJetTagsProducer::fillDescriptions(edm::ConfigurationDescriptio
   desc.add<std::vector<std::string>>("input_names", 
     { "input_1", "input_2", "input_3", "input_4", "input_5" });
   desc.add<edm::FileInPath>("graph_path",
-    edm::FileInPath("RecoBTag/Combined/data/DeepFlavourV03_10X_training/constant_graph.pb"));
+    edm::FileInPath("RecoBTag/Combined/data/DeepFlavourV04_no_puppi/constant_graph.pb"));
   desc.add<std::vector<std::string>>("lp_names",
     { "cpf_input_batchnorm/keras_learning_phase" });
   desc.add<std::vector<std::string>>("output_names",
@@ -207,8 +207,8 @@ void DeepFlavourTFJetTagsProducer::produce(edm::Event& iEvent, const edm::EventS
 
   std::vector<tensorflow::TensorShape> input_sizes {
     {n_batch_jets, 15},         // input_1 - global jet features
-    {n_batch_jets, 25, 16},     // input_2 - charged pf
-    {n_batch_jets, 25, 6},      // input_3 - neutral pf
+    {n_batch_jets, 25, 15},     // input_2 - charged pf
+    {n_batch_jets, 25, 5},      // input_3 - neutral pf
     {n_batch_jets, 4, 12},      // input_4 - vertices 
     {n_batch_jets, 1}           // input_5 - jet pt for reg 
   };
