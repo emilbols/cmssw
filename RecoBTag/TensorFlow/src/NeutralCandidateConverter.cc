@@ -17,7 +17,7 @@ namespace btagbtvdeep {
   
   void recoCandidateToFeatures(const reco::PFCandidate * n_pf,
 			       const reco::Jet & jet,
-			       const float drminpfcandsv, const float jetR, const float puppiw,
+			       const float drminpfcandsv, const float jetR,
 			       NeutralCandidateFeatures & n_pf_features) {
     
     commonCandidateToFeatures(n_pf, jet, drminpfcandsv, jetR, n_pf_features);

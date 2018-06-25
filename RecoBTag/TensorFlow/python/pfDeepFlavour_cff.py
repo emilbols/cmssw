@@ -11,5 +11,5 @@ from PhysicsTools.PatAlgos.slimming.primaryVertexAssociation_cfi import primaryV
 
 # This task is not used, useful only if we run DeepFlavour from RECO
 # jets (RECO/AOD)
-pfDeepFlavourTask = cms.Task(puppi, primaryVertexAssociation,
+pfDeepFlavourTask = cms.Task(primaryVertexAssociation,
                              pfDeepFlavourTagInfos, pfDeepFlavourJetTags)

@@ -64,14 +64,11 @@ class DeepFlavourTagInfoProducer : public edm::stream::EDProducer<> {
     edm::EDGetTokenT<VertexCollection> vtx_token_;
     edm::EDGetTokenT<SVCollection> sv_token_;
     edm::EDGetTokenT<ShallowTagInfoCollection> shallow_tag_info_token_;
-    edm::EDGetTokenT<edm::ValueMap<float>> puppi_value_map_token_;
     edm::EDGetTokenT<edm::ValueMap<int>> pvasq_value_map_token_;
     edm::EDGetTokenT<edm::Association<VertexCollection>> pvas_token_;
 
-    bool use_puppi_value_map_;
     bool use_pvasq_value_map_;
 
-    bool fallback_puppi_weight_;
     bool fallback_vertex_association_;
 
 };
@@ -84,24 +81,16 @@ DeepFlavourTagInfoProducer::DeepFlavourTagInfoProducer(const edm::ParameterSet& 
   vtx_token_(consumes<VertexCollection>(iConfig.getParameter<edm::InputTag>("vertices"))),
   sv_token_(consumes<SVCollection>(iConfig.getParameter<edm::InputTag>("secondary_vertices"))),
   shallow_tag_info_token_(consumes<ShallowTagInfoCollection>(iConfig.getParameter<edm::InputTag>("shallow_tag_infos"))),
-  use_puppi_value_map_(false),
   use_pvasq_value_map_(false),
-  fallback_puppi_weight_(iConfig.getParameter<bool>("fallback_puppi_weight")),
   fallback_vertex_association_(iConfig.getParameter<bool>("fallback_vertex_association"))
 {
   produces<DeepFlavourTagInfoCollection>();
-
-  const auto & puppi_value_map_tag = iConfig.getParameter<edm::InputTag>("puppi_value_map");
-  if (!puppi_value_map_tag.label().empty()) {
-    puppi_value_map_token_ = consumes<edm::ValueMap<float>>(puppi_value_map_tag);
-    use_puppi_value_map_ = true;
-  }
 
   const auto & pvas_tag = iConfig.getParameter<edm::InputTag>("vertex_associator");
   if (!pvas_tag.label().empty()) {
     pvasq_value_map_token_ = consumes<edm::ValueMap<int>>(pvas_tag);
     pvas_token_ = consumes<edm::Association<VertexCollection>>(pvas_tag);
-    use_pvasq_value_map_ = true;
+    use_pvasq_value_map_ = false;
   }
 
 }
@@ -120,12 +109,10 @@ void DeepFlavourTagInfoProducer::fillDescriptions(edm::ConfigurationDescriptions
   desc.add<double>("min_candidate_pt", 0.95);
   desc.add<bool>("flip", false);
   desc.add<edm::InputTag>("vertices", edm::InputTag("offlinePrimaryVertices"));
-  desc.add<edm::InputTag>("puppi_value_map", edm::InputTag("puppi"));
   desc.add<edm::InputTag>("secondary_vertices", edm::InputTag("inclusiveCandidateSecondaryVertices"));
   desc.add<edm::InputTag>("jets", edm::InputTag("ak4PFJetsCHS"));
   desc.add<edm::InputTag>("vertex_associator", edm::InputTag("primaryVertexAssociation","original"));
-  desc.add<bool>("fallback_puppi_weight", false);
-  desc.add<bool>("fallback_vertex_association", false);
+  desc.add<bool>("fallback_vertex_association", true);
   descriptions.add("pfDeepFlavourTagInfos", desc);
 }
 
@@ -152,11 +139,6 @@ void DeepFlavourTagInfoProducer::produce(edm::Event& iEvent, const edm::EventSet
 
   edm::Handle<ShallowTagInfoCollection> shallow_tag_infos;
   iEvent.getByToken(shallow_tag_info_token_, shallow_tag_infos);
-
-  edm::Handle<edm::ValueMap<float>> puppi_value_map;
-  if (use_puppi_value_map_) {
-    iEvent.getByToken(puppi_value_map_token_, puppi_value_map);
-  }
 
   edm::Handle<edm::ValueMap<int>> pvasq_value_map;
   edm::Handle<edm::Association<VertexCollection>> pvas;
@@ -299,14 +281,6 @@ void DeepFlavourTagInfoProducer::produce(edm::Event& iEvent, const edm::EventSet
     } else if (pat_jet && reco_cand) {
       reco_ptr = pat_jet->getPFConstituent(i);
     }
-    // get PUPPI weight from value map
-    float puppiw = 1.0; // fallback value
-    if (reco_cand && use_puppi_value_map_) {
-      puppiw = (*puppi_value_map)[reco_ptr];
-    } else if (reco_cand && !fallback_puppi_weight_) {
-      throw edm::Exception(edm::errors::InvalidReference, "PUPPI value map missing") <<
-        "use fallback_puppi_weight option to use " << puppiw << "as default";
-    }
 
     float drminpfcandsv = btagbtvdeep::mindrsvpfcand(svs_unsorted, cand);
 
@@ -347,7 +321,7 @@ void DeepFlavourTagInfoProducer::produce(edm::Event& iEvent, const edm::EventSet
           if(PV_orig.isNonnull()) PV = reco::VertexRef(vtxs, PV_orig.key());
         }
         btagbtvdeep::recoCandidateToFeatures(reco_cand, jet, trackinfo, 
-					     drminpfcandsv,  static_cast<float> (jet_radius_), puppiw,
+					     drminpfcandsv,  static_cast<float> (jet_radius_),
 					     pv_ass_quality, PV, c_pf_features, flip_);
       }
     } else {
@@ -360,7 +334,7 @@ void DeepFlavourTagInfoProducer::produce(edm::Event& iEvent, const edm::EventSet
         btagbtvdeep::packedCandidateToFeatures(packed_cand, jet, drminpfcandsv, static_cast<float> (jet_radius_),
                                                                           n_pf_features);
       } else if (reco_cand) {
-        btagbtvdeep::recoCandidateToFeatures(reco_cand, jet, drminpfcandsv, static_cast<float> (jet_radius_), puppiw,
+        btagbtvdeep::recoCandidateToFeatures(reco_cand, jet, drminpfcandsv, static_cast<float> (jet_radius_),
                                                                         n_pf_features);
       }
     }

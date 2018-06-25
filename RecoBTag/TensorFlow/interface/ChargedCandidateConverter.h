@@ -61,7 +61,7 @@ namespace btagbtvdeep {
   void recoCandidateToFeatures(const reco::PFCandidate * c_pf,
 			       const reco::Jet & jet,
 			       const TrackInfoBuilder & track_info,
-			       const float drminpfcandsv, const float jetR, const float puppiw,
+			       const float drminpfcandsv, const float jetR,
 			       const int pv_ass_quality,
 			       const reco::VertexRef & pv, 
 			       ChargedCandidateFeatures & c_pf_features,

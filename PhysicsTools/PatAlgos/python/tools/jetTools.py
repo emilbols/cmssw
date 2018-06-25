@@ -604,10 +604,8 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
                 # use right input tags when running with RECO PF candidates, which actually
                 # depens of wether jets were slimmed or not (check for s/S-limmed in name)
                 if not ('limmed' in jetSource.value()):
-                  puppi_value_map = cms.InputTag("puppi")
                   vertex_associator = cms.InputTag("primaryVertexAssociation","original")
                 else:
-                  puppi_value_map = cms.InputTag("")
                   vertex_associator = cms.InputTag("")
                 addToProcessAndTask(btagPrefix+btagInfo+labelName+postfix,
                                     btag.pfDeepFlavourTagInfos.clone(
@@ -615,7 +613,6 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
                                       vertices=pvSource,
                                       secondary_vertices=svUsed,
                                       shallow_tag_infos = cms.InputTag(btagPrefix+deep_csv_tag_infos+labelName+postfix),
-                                      puppi_value_map = puppi_value_map,
                                       vertex_associator = vertex_associator,
                                       flip = flip),
                                     process, task)

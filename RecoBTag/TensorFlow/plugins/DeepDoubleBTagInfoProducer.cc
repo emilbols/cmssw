@@ -332,7 +332,7 @@ void DeepDoubleBTagInfoProducer::produce(edm::Event& iEvent,
                         auto pv = reco::VertexRef(vtxs, pvi);
                         btagbtvdeep::recoCandidateToFeatures(
                             reco_cand, jet, trackinfo, drminpfcandsv,
-                            static_cast<float>(jet_radius_), puppiw, pv_ass_quality, pv,
+                            static_cast<float>(jet_radius_), pv_ass_quality, pv,
                             c_pf_features);
                     }
                 }

@@ -56,6 +56,7 @@ pfBTaggingTask = cms.Task(
     pfGhostTrackVertexTagInfos,
     pfGhostTrackBJetTags,
     pfDeepCSVTask,
+    pfDeepFlavourTask,
 
     # soft lepton tag infos and algos
     softPFMuonsTagInfos,

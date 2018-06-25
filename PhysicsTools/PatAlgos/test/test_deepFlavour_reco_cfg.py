@@ -114,6 +114,12 @@ btagDiscriminators = [
     ,'pfDeepCMVAJetTags:probudsg'
     ,'pfDeepCMVAJetTags:probbb'
     ,'pfDeepCMVAJetTags:probcc'
+    ,'pfDeepFlavourJetTags:probb'
+    ,'pfDeepFlavourJetTags:probbb'
+    ,'pfDeepFlavourJetTags:problepb'
+    ,'pfDeepFlavourJetTags:probc'
+    ,'pfDeepFlavourJetTags:probuds'
+    ,'pfDeepFlavourJetTags:probg'
 ]
 
 # uncomment the following lines to add ak4PFJets with new b-tags to your PAT output
@@ -126,34 +132,6 @@ addJetCollection(
 )
 process.patJetsAK4PF.addTagInfos = True
 
-# uncomment the following lines to add ak8PFJetsCHS with new b-tags to your PAT output
-addJetCollection(
-   process,
-   labelName = 'AK8PFCHS',
-   jetSource = cms.InputTag('ak8PFJetsCHS'),
-   jetCorrections = ('AK8PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'Type-2'),
-   algo = 'AK',
-   rParam = 0.8,
-   btagDiscriminators = ['pfBoostedDoubleSecondaryVertexAK8BJetTags']
-)
-process.patJetsAK8PFCHS.addTagInfos = True
-
-# uncomment the following lines to add subjets of ak8PFJetsCHSSoftDrop with new b-tags to your PAT output
-from pdb import set_trace
-addJetCollection(
-   process,
-   labelName = 'AK8PFCHSSoftDropSubjets',
-   jetSource = cms.InputTag('ak8PFJetsCHSSoftDrop','SubJets'),
-   jetCorrections = ('AK4PFchs', cms.vstring(['L1FastJet', 'L2Relative', 'L3Absolute']), 'Type-2'), # Using AK4 JECs for subjets which might not be completely appropriate
-   algo = 'AK',  # needed for subjet flavor clustering
-   btagDiscriminators = btagDiscriminators,
-   explicitJTA = True,  # needed for subjet b tagging
-   svClustering = True, # needed for subjet b tagging
-   fatJets = cms.InputTag("ak8PFJetsCHS"),               # needed for subjet flavor clustering
-   groomedFatJets = cms.InputTag("ak8PFJetsCHSSoftDrop"), # needed for subjet flavor clustering
-   rParam = 0.8, # needed for subjet flavor clustering
-)
-process.patJetsAK8PFCHSSoftDropSubjets.addTagInfos = True
 
 ## JetID works only with RECO input for the CaloTowers (s. below for 'process.source.fileNames')
 #process.patJets.addJetID=True
@@ -169,12 +147,12 @@ process.out.outputCommands.append( 'drop *_selectedPatJetsAK4PF_caloTowers_*' )
 #process.GlobalTag.globaltag =  'MCRUN1_74_V2::All'     ##  (according to https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideFrontierConditions)
 #                                         ##
 ## switch to RECO input
-#from PhysicsTools.PatAlgos.patInputFiles_cff import filesRelValProdTTbarAODSIM
-#process.source.fileNames = filesRelValProdTTbarAODSIM
-from PhysicsTools.PatAlgos.patInputFiles_cff import filesRelValTTbarGENSIMRECO
-process.source.fileNames = filesRelValTTbarGENSIMRECO
+
+process.source.fileNames = ['/store/mc/RunIISpring18DRPremix/QCD_Pt_470to600_TuneCP5_13TeV_pythia8/AODSIM/100X_upgrade2018_realistic_v10-v1/90000/FC6A4159-4024-E811-9BD5-B083FED07198.root']
+#from PhysicsTools.PatAlgos.patInputFiles_cff import filesRelValTTbarGENSIMRECO
+#process.source.fileNames = filesRelValTTbarGENSIMRECO
 #                                         ##
-process.maxEvents.input = 10
+process.maxEvents.input = 5000
 #                                         ##
 #   process.out.outputCommands = [ ... ]  ##  (e.g. taken from PhysicsTools/PatAlgos/python/patEventContent_cff.py)
 #                                         ##
