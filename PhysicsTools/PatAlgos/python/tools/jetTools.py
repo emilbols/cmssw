@@ -603,17 +603,12 @@ def setupBTagging(process, jetSource, pfCandidates, explicitJTA, pvSource, svSou
                     flip = False
                 # use right input tags when running with RECO PF candidates, which actually
                 # depens of wether jets were slimmed or not (check for s/S-limmed in name)
-                if not ('limmed' in jetSource.value()):
-                  vertex_associator = cms.InputTag("primaryVertexAssociation","original")
-                else:
-                  vertex_associator = cms.InputTag("")
                 addToProcessAndTask(btagPrefix+btagInfo+labelName+postfix,
                                     btag.pfDeepFlavourTagInfos.clone(
                                       jets = jetSource,
                                       vertices=pvSource,
                                       secondary_vertices=svUsed,
                                       shallow_tag_infos = cms.InputTag(btagPrefix+deep_csv_tag_infos+labelName+postfix),
-                                      vertex_associator = vertex_associator,
                                       flip = flip),
                                     process, task)
                 

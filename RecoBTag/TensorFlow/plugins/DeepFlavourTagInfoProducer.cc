@@ -30,7 +30,6 @@
 
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
 #include "DataFormats/Candidate/interface/VertexCompositePtrCandidate.h"
-
 #include "RecoBTag/TensorFlow/interface/deep_helpers.h"
 
 #include "FWCore/ParameterSet/interface/Registry.h"
@@ -64,13 +63,7 @@ class DeepFlavourTagInfoProducer : public edm::stream::EDProducer<> {
     edm::EDGetTokenT<VertexCollection> vtx_token_;
     edm::EDGetTokenT<SVCollection> sv_token_;
     edm::EDGetTokenT<ShallowTagInfoCollection> shallow_tag_info_token_;
-    edm::EDGetTokenT<edm::ValueMap<int>> pvasq_value_map_token_;
-    edm::EDGetTokenT<edm::Association<VertexCollection>> pvas_token_;
-
-    bool use_pvasq_value_map_;
-
-    bool fallback_vertex_association_;
-
+ 
 };
 
 DeepFlavourTagInfoProducer::DeepFlavourTagInfoProducer(const edm::ParameterSet& iConfig) :
@@ -80,18 +73,11 @@ DeepFlavourTagInfoProducer::DeepFlavourTagInfoProducer(const edm::ParameterSet& 
   jet_token_(consumes<edm::View<reco::Jet> >(iConfig.getParameter<edm::InputTag>("jets"))),
   vtx_token_(consumes<VertexCollection>(iConfig.getParameter<edm::InputTag>("vertices"))),
   sv_token_(consumes<SVCollection>(iConfig.getParameter<edm::InputTag>("secondary_vertices"))),
-  shallow_tag_info_token_(consumes<ShallowTagInfoCollection>(iConfig.getParameter<edm::InputTag>("shallow_tag_infos"))),
-  use_pvasq_value_map_(false),
-  fallback_vertex_association_(iConfig.getParameter<bool>("fallback_vertex_association"))
-{
-  produces<DeepFlavourTagInfoCollection>();
+  shallow_tag_info_token_(consumes<ShallowTagInfoCollection>(iConfig.getParameter<edm::InputTag>("shallow_tag_infos")))
 
-  const auto & pvas_tag = iConfig.getParameter<edm::InputTag>("vertex_associator");
-  if (!pvas_tag.label().empty()) {
-    pvasq_value_map_token_ = consumes<edm::ValueMap<int>>(pvas_tag);
-    pvas_token_ = consumes<edm::Association<VertexCollection>>(pvas_tag);
-    use_pvasq_value_map_ = false;
-  }
+{
+    produces<DeepFlavourTagInfoCollection>();
+
 
 }
 
@@ -111,8 +97,6 @@ void DeepFlavourTagInfoProducer::fillDescriptions(edm::ConfigurationDescriptions
   desc.add<edm::InputTag>("vertices", edm::InputTag("offlinePrimaryVertices"));
   desc.add<edm::InputTag>("secondary_vertices", edm::InputTag("inclusiveCandidateSecondaryVertices"));
   desc.add<edm::InputTag>("jets", edm::InputTag("ak4PFJetsCHS"));
-  desc.add<edm::InputTag>("vertex_associator", edm::InputTag("primaryVertexAssociation","original"));
-  desc.add<bool>("fallback_vertex_association", true);
   descriptions.add("pfDeepFlavourTagInfos", desc);
 }
 
@@ -140,13 +124,7 @@ void DeepFlavourTagInfoProducer::produce(edm::Event& iEvent, const edm::EventSet
   edm::Handle<ShallowTagInfoCollection> shallow_tag_infos;
   iEvent.getByToken(shallow_tag_info_token_, shallow_tag_infos);
 
-  edm::Handle<edm::ValueMap<int>> pvasq_value_map;
-  edm::Handle<edm::Association<VertexCollection>> pvas;
-  if (use_pvasq_value_map_) {
-    iEvent.getByToken(pvasq_value_map_token_, pvasq_value_map);
-    iEvent.getByToken(pvas_token_, pvas);
-  }
-
+ 
   edm::ESHandle<TransientTrackBuilder> track_builder;
   iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", track_builder);
 
@@ -297,32 +275,10 @@ void DeepFlavourTagInfoProducer::produce(edm::Event& iEvent, const edm::EventSet
         btagbtvdeep::packedCandidateToFeatures(packed_cand, jet, trackinfo, 
 					       drminpfcandsv, static_cast<float> (jet_radius_), c_pf_features, flip_);
       } else if (reco_cand) {
-        // get vertex association quality
-        int pv_ass_quality = 0; // fallback value
-        if (use_pvasq_value_map_) {
-          pv_ass_quality = (*pvasq_value_map)[reco_ptr];
-        } else if (!fallback_vertex_association_) {
-          throw edm::Exception(edm::errors::InvalidReference, "vertex association missing") <<
-          "use fallback_vertex_association option to use" << pv_ass_quality <<
-          "as default quality and closest dz PV as criteria";
-        }
-        // getting the PV as PackedCandidatesProducer
-        // but using not the slimmed but original vertices
-        auto ctrack = reco_cand->bestTrack();
-        int pvi=-1;
-        float dist=1e99;
-        for(size_t ii=0;ii<vtxs->size();ii++){
-          float dz = (ctrack) ? std::abs(ctrack->dz(((*vtxs)[ii]).position())) : 0;
-          if(dz<dist) {pvi=ii;dist=dz; }
-        }
-        auto PV = reco::VertexRef(vtxs, pvi);
-        if (use_pvasq_value_map_) {
-          const reco::VertexRef & PV_orig = (*pvas)[reco_ptr];
-          if(PV_orig.isNonnull()) PV = reco::VertexRef(vtxs, PV_orig.key());
-        }
-        btagbtvdeep::recoCandidateToFeatures(reco_cand, jet, trackinfo, 
+       
+	btagbtvdeep::recoCandidateToFeatures(reco_cand, jet, trackinfo, 
 					     drminpfcandsv,  static_cast<float> (jet_radius_),
-					     pv_ass_quality, PV, c_pf_features, flip_);
+					     c_pf_features, flip_);
       }
     } else {
       // is neutral candidate

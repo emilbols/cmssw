@@ -25,9 +25,7 @@ namespace btagbtvdeep {
 				 const bool flip) {
     
     commonCandidateToFeatures(c_pf, jet, track_info, drminpfcandsv, jetR, c_pf_features, flip);
-    
-    c_pf_features.vtx_ass = c_pf->pvAssociationQuality();
-    
+      
     // if PackedCandidate does not have TrackDetails this gives an Exception
     // because unpackCovariance might be called for pseudoTrack/bestTrack
     if (c_pf->hasTrackDetails()) {
@@ -46,21 +44,12 @@ namespace btagbtvdeep {
   void recoCandidateToFeatures(const reco::PFCandidate * c_pf,
 			       const reco::Jet & jet,
 			       const TrackInfoBuilder & track_info,
-			       const float drminpfcandsv, const float jetR,
-			       const int pv_ass_quality,
-			       const reco::VertexRef & pv, 
+			       const float drminpfcandsv, const float jetR, 
 			       ChargedCandidateFeatures & c_pf_features,
 			       const bool flip) {
     
     commonCandidateToFeatures(c_pf, jet, track_info, drminpfcandsv, jetR, c_pf_features, flip);
-    
-    c_pf_features.vtx_ass = (float) pat::PackedCandidate::PVAssociationQuality(qualityMap[pv_ass_quality]);
-    if (c_pf->trackRef().isNonnull() && 
-	pv->trackWeight(c_pf->trackRef()) > 0.5 &&
-	pv_ass_quality == 7) {
-      c_pf_features.vtx_ass = (float) pat::PackedCandidate::UsedInFitTight;
-    }
-     
+         
     const auto & pseudo_track =  (c_pf->bestTrack()) ? *c_pf->bestTrack() : reco::Track();
     c_pf_features.chi2 = catch_infs_and_bound(std::floor(pseudo_track.normalizedChi2()),300,-1,300);
     // conditions from PackedCandidate producer

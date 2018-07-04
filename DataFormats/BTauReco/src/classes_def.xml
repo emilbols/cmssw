@@ -441,7 +441,8 @@
    <version ClassVersion="4" checksum="729154565"/>
     <version ClassVersion="3" checksum="938442516"/>
   </class>
-  <class name="btagbtvdeep::ChargedCandidateFeatures" ClassVersion="5">
+  <class name="btagbtvdeep::ChargedCandidateFeatures" ClassVersion="6">
+   <version ClassVersion="6" checksum="2591003435"/>
    <version ClassVersion="5" checksum="4214633831"/>
     <version ClassVersion="4" checksum="2173116472"/>
     <version ClassVersion="3" checksum="1302021141"/>

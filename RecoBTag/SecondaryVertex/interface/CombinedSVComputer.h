@@ -220,7 +220,6 @@ void CombinedSVComputer::fillCommonVariables(reco::TaggingVariableList & vars, r
 
                 vars.insert(btau::trackMomentum, trackMag, true);
                 vars.insert(btau::trackEta, trackMom.Eta(), true);
-
                 vars.insert(btau::trackPtRel, VectorUtil::Perp(trackMom, jetDir), true);
                 vars.insert(btau::trackPPar, jetDir.Dot(trackMom), true);
                 vars.insert(btau::trackDeltaR, VectorUtil::DeltaR(trackMom, jetDir), true);

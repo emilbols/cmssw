@@ -313,26 +313,10 @@ void DeepDoubleBTagInfoProducer::produce(edm::Event& iEvent,
                     }
                     else if (reco_cand)
                     {
-                        // get vertex association quality
-                        int pv_ass_quality = 0; // fallback value
-                        // getting the PV as PackedCandidatesProducer
-                        // but using not the slimmed but original vertices
-                        auto ctrack = reco_cand->bestTrack();
-                        int pvi = -1;
-                        float dist = 1e99;
-                        for (size_t ii = 0; ii < vtxs->size(); ii++)
-                        {
-                            float dz = (ctrack) ? std::abs(ctrack->dz(((*vtxs)[ii]).position())) : 0;
-                            if (dz < dist)
-                            {
-                                pvi = ii;
-                                dist = dz;
-                            }
-                        }
-                        auto pv = reco::VertexRef(vtxs, pvi);
-                        btagbtvdeep::recoCandidateToFeatures(
+                        
+		      btagbtvdeep::recoCandidateToFeatures(
                             reco_cand, jet, trackinfo, drminpfcandsv,
-                            static_cast<float>(jet_radius_), pv_ass_quality, pv,
+                            static_cast<float>(jet_radius_),
                             c_pf_features);
                     }
                 }

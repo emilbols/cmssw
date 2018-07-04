@@ -96,7 +96,6 @@ namespace btagbtvdeep {
     *(++ptr) = c_pf_features.btagPf_trackJetDistVal;
     *(++ptr) = c_pf_features.ptrel;
     *(++ptr) = c_pf_features.drminsv;
-    *(++ptr) = c_pf_features.vtx_ass;
     *(++ptr) = c_pf_features.chi2;
     *(++ptr) = c_pf_features.quality;
 
