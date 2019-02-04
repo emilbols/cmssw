@@ -38,6 +38,30 @@ namespace btagbtvdeep {
 
   }
 
+  void jet_pruned_tensor_filler(tensorflow::Tensor & tensor,
+                         std::size_t jet_n,
+                         const btagbtvdeep::DeepFlavourFeatures & features) {
+
+    float* ptr = &tensor.matrix<float>()(jet_n, 0);
+
+    // jet variables
+    const auto & jet_features = features.jet_features;
+    *ptr     = jet_features.pt;
+    *(++ptr) = jet_features.eta;
+    // number of elements in different collections
+    *(++ptr) = features.c_pf_features.size();
+    *(++ptr) = features.n_pf_features.size();
+    *(++ptr) = features.sv_features.size();
+    *(++ptr) = features.npv;
+    // variables from ShallowTagInfo
+    const auto & tag_info_features = features.tag_info_features;
+    *(++ptr) = tag_info_features.trackSip2dValAboveCharm;
+    *(++ptr) = tag_info_features.trackSip2dSigAboveCharm;
+    *(++ptr) = tag_info_features.trackSip3dSigAboveCharm;
+    *(++ptr) = tag_info_features.jetNSelectedTracks;
+
+  }
+
   void db_tensor_filler(tensorflow::Tensor & tensor,
                          std::size_t jet_n,
                          const btagbtvdeep::DeepDoubleBFeatures & features) {
@@ -102,6 +126,23 @@ namespace btagbtvdeep {
     *(++ptr) = c_pf_features.quality;
 
   }
+
+  void c_pf_pruned_tensor_filler(tensorflow::Tensor & tensor,
+                          std::size_t jet_n,
+                          std::size_t c_pf_n,
+                          const btagbtvdeep::ChargedCandidateFeatures & c_pf_features) {
+
+    float* ptr = &tensor.tensor<float, 3>()(jet_n, c_pf_n, 0);
+
+    *ptr     = c_pf_features.btagPf_trackEtaRel;
+    *(++ptr) = c_pf_features.btagPf_trackSip2dVal;
+    *(++ptr) = c_pf_features.btagPf_trackSip2dSig;
+    *(++ptr) = c_pf_features.btagPf_trackSip3dVal;
+    *(++ptr) = c_pf_features.btagPf_trackSip3dSig;
+    *(++ptr) = c_pf_features.btagPf_trackJetDistVal;
+    *(++ptr) = c_pf_features.btagPf_trackPtRel;
+    *(++ptr) = c_pf_features.btagPf_trackPPar;
+  }
   
   void c_pf_reduced_tensor_filler(tensorflow::Tensor & tensor,
                           std::size_t jet_n,
@@ -137,7 +178,19 @@ namespace btagbtvdeep {
     *(++ptr) = n_pf_features.puppiw;
 
   }
-  
+
+
+  void n_pf_pruned_tensor_filler(tensorflow::Tensor & tensor,
+                          std::size_t jet_n,
+                          std::size_t n_pf_n,
+                          const btagbtvdeep::NeutralCandidateFeatures & n_pf_features) {
+
+    float* ptr = &tensor.tensor<float, 3>()(jet_n, n_pf_n, 0);
+
+    *ptr     = n_pf_features.ptrel;
+    *(++ptr) = n_pf_features.deltaR;
+    *(++ptr) = n_pf_features.isGamma;
+  }  
   
   void sv_tensor_filler(tensorflow::Tensor & tensor,
                           std::size_t jet_n,
@@ -147,7 +200,7 @@ namespace btagbtvdeep {
     float* ptr = &tensor.tensor<float, 3>()(jet_n, sv_n, 0);
 
     *ptr     = sv_features.pt;
-    *(++ptr) = sv_features.deltaR;
+    *(++ptr) = sv_features.deltaR; 
     *(++ptr) = sv_features.mass;
     *(++ptr) = sv_features.ntracks;
     *(++ptr) = sv_features.chi2;
@@ -155,6 +208,24 @@ namespace btagbtvdeep {
     *(++ptr) = sv_features.dxy;
     *(++ptr) = sv_features.dxysig;
     *(++ptr) = sv_features.d3d;
+    *(++ptr) = sv_features.d3dsig;
+    *(++ptr) = sv_features.costhetasvpv;
+    *(++ptr) = sv_features.enratio;
+
+  }
+
+  void sv_pruned_tensor_filler(tensorflow::Tensor & tensor,
+                          std::size_t jet_n,
+                          std::size_t sv_n,
+                          const btagbtvdeep::SecondaryVertexFeatures & sv_features) {
+
+    float* ptr = &tensor.tensor<float, 3>()(jet_n, sv_n, 0);
+
+    *ptr     = sv_features.pt; 
+    *(++ptr) = sv_features.mass;
+    *(++ptr) = sv_features.ntracks;
+    *(++ptr) = sv_features.dxy;
+    *(++ptr) = sv_features.dxysig;
     *(++ptr) = sv_features.d3dsig;
     *(++ptr) = sv_features.costhetasvpv;
     *(++ptr) = sv_features.enratio;

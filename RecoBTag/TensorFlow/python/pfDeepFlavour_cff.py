@@ -5,7 +5,8 @@ from RecoBTag.FeatureTools.pfNegativeDeepFlavourTagInfos_cfi import pfNegativeDe
 from RecoBTag.FeatureTools.pfDeepDoubleBTagInfos_cfi import pfDeepDoubleBTagInfos
 
 from RecoBTag.TensorFlow.pfDeepFlavourJetTags_cfi import pfDeepFlavourJetTags
-from RecoBTag.TensorFlow.pfNegativeDeepFlavourJetTags_cfi import pfNegativeDeepFlavourJetTags
+from RecoBTag.TensorFlow.pfDeepFlavourPrunedJetTags_cfi import pfDeepFlavourPrunedJetTags
+from RecoBTag.TensorFlow.pfNegativeDeepFlavourJetTags_cfi import pfNegativeDeepFlavourJetTags, pfNegativeDeepFlavourPrunedJetTags
 from RecoBTag.TensorFlow.pfDeepDoubleBJetTags_cfi import pfDeepDoubleBJetTags
 
 from CommonTools.PileupAlgos.Puppi_cff import puppi
