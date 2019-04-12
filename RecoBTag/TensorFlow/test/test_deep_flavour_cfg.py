@@ -22,59 +22,8 @@ process.load("Configuration.Geometry.GeometryRecoDB_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag.globaltag = '94X_dataRun2_v10'
+#process.GlobalTag.globaltag = '102X_dataRun2_v7'
 process.load("Configuration.StandardSequences.MagneticField_cff")
-
-trkProbaCalibTag = 'JPcalib_Data94X_2016_v1'
-process.GlobalTag.toGet = cms.VPSet(
-    cms.PSet(record = cms.string("BTagTrackProbability3DRcd"),
-      tag = cms.string(trkProbaCalibTag),
-      connect = cms.string("frontier://FrontierProd/CMS_CONDITIONS")
-    )
-)
-
-
-from CondCore.DBCommon.CondDBSetup_cfi import *
-import os
-dbfile='Summer16_07Aug2017All_V11_DATA'
-print "\nUsing private SQLite file", dbfile, "\n"
-process.jec = cms.ESSource("PoolDBESSource",CondDBSetup,
-                           connect = cms.string( "sqlite_fip:RecoBTag/TensorFlow/test/"+dbfile+'.db'),
-                           toGet =  cms.VPSet(
-        cms.PSet(
-            record = cms.string("JetCorrectionsRecord"),
-            tag = cms.string("JetCorrectorParametersCollection_"+dbfile+"_AK4PF"),
-            label= cms.untracked.string("AK4PF")
-            ),
-        cms.PSet(
-            record = cms.string("JetCorrectionsRecord"),
-            tag = cms.string("JetCorrectorParametersCollection_"+dbfile+"_AK4PFchs"),
-            label= cms.untracked.string("AK4PFchs")
-            ),
-        cms.PSet(
-            record = cms.string("JetCorrectionsRecord"),
-            tag = cms.string("JetCorrectorParametersCollection_"+dbfile+"_AK4PFPuppi"),
-            label= cms.untracked.string("AK4PFPuppi")
-            ),
-        cms.PSet(
-            record = cms.string("JetCorrectionsRecord"),
-            tag = cms.string("JetCorrectorParametersCollection_"+dbfile+"_AK8PF"),
-            label= cms.untracked.string("AK8PF")
-            ),
-        cms.PSet(
-            record = cms.string("JetCorrectionsRecord"),
-            tag = cms.string("JetCorrectorParametersCollection_"+dbfile+"_AK8PFchs"),
-            label= cms.untracked.string("AK8PFchs")
-            ),
-        cms.PSet(
-            record = cms.string("JetCorrectionsRecord"),
-            tag = cms.string("JetCorrectorParametersCollection_"+dbfile+"_AK8PFPuppi"),
-            label= cms.untracked.string("AK8PFPuppi")
-            ),
-        )
-                           )
-
-process.es_prefer_jec = cms.ESPrefer("PoolDBESSource",'jec')
-
 
 
 ## Output Module Configuration (expects a path 'p')
@@ -118,7 +67,8 @@ updateJetCollection(
       'pfNegativeDeepFlavourJetTags:probc',
       'pfNegativeDeepFlavourJetTags:probuds',
       'pfNegativeDeepFlavourJetTags:probg',
-      ]
+      ],
+   postfix = 'check'
    )
 process.source.fileNames = cms.untracked.vstring('/store/data/Run2016B/JetHT/MINIAOD/17Jul2018_ver2-v2/100000/00323A27-15B8-E811-88B5-E0071B6C9DB0.root')
 
