@@ -122,9 +122,11 @@ void DeepFlavourTFJetTagsProducer::fillDescriptions(edm::ConfigurationDescriptio
   desc.add<edm::InputTag>("src", edm::InputTag("pfDeepFlavourTagInfos"));
   desc.add<std::vector<std::string>>("input_names", {"input_1", "input_2", "input_3", "input_4", "input_5"});
   desc.add<edm::FileInPath>("graph_path",
-                            edm::FileInPath("RecoBTag/Combined/data/DeepFlavourV03_10X_training/constant_graph.pb"));
-  desc.add<std::vector<std::string>>("lp_names", {"cpf_input_batchnorm/keras_learning_phase"});
-  desc.add<std::vector<std::string>>("output_names", {"ID_pred/Softmax", "regression_pred/BiasAdd"});
+    edm::FileInPath("RecoBTag/Combined/data/DeepFlavour/DeepJetPhaseIIV01_94X_training.pb"));
+  desc.add<std::vector<std::string>>("lp_names",
+    { "cpf_input_batchnorm/keras_learning_phase" });
+  desc.add<std::vector<std::string>>("output_names",
+    { "ID_pred/Softmax", "regression_pred/BiasAdd" });
   {
     edm::ParameterSetDescription psd0;
     psd0.add<std::vector<unsigned int>>("probb", {0});
