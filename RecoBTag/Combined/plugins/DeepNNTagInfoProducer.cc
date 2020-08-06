@@ -115,7 +115,18 @@ void TemplatedDeepNNTagInfoProducer<IPTag,SVTag>::produce(edm::Event& iEvent, co
     // get TagInfos
     const SVTag & svTagInfo = *(iterTI);
     const IPTag & ipInfo = *(iterTI->trackIPTagInfoRef().get());
-    
+    if constexpr(std::is_same_v<SVTag, reco::CandSecondaryVertexTagInfo>) {
+	std::cout << svTagInfo.nVertices() << std::endl;
+	if (svTagInfo.nVertices() > 0){
+	  const reco::VertexCompositePtrCandidate &vertex = svTagInfo.secondaryVertex(0);
+	  const std::vector<reco::CandidatePtr> &tracks = vertex.daughterPtrVector();
+	  for (std::vector<reco::CandidatePtr>::const_iterator track = tracks.begin(); track != tracks.end(); ++track) {
+	    std::cout << "track pt = " << (*track)->pt() << std::endl;
+	    std::cout << "track eta = " << (*track)->eta() << std::endl;
+	    std::cout << "track phi = " << (*track)->phi() << std::endl;
+	  }
+	}
+      }
     reco::TaggingVariableList vars = computer_(ipInfo, svTagInfo);
     std::vector<float> tagValList = vars.getList(reco::btau::trackEtaRel,false);
     vars.insert(reco::btau::jetNTracksEtaRel, tagValList.size());
